@@ -21,16 +21,17 @@ import java.util.Properties;
 @SuppressWarnings("unused")
 public class VirtualFurnaceAPI {
 
+    private static VirtualFurnaceAPI instance;
+
     static {
         ConfigurationSerialization.registerClass(Furnace.class, "furnace");
         ConfigurationSerialization.registerClass(FurnaceProperties.class, "furnace_properties");
         ConfigurationSerialization.registerClass(FurnaceTile.class, "tile");
     }
 
-    private boolean enabled = true;
-    private static VirtualFurnaceAPI instance;
     private final String apiVersion;
     private final JavaPlugin plugin;
+    private boolean enabled = true;
     private RecipeManager recipeManager;
     private FurnaceManager furnaceManager;
     private TileManager tileManager;
@@ -69,9 +70,11 @@ public class VirtualFurnaceAPI {
             this.enabled = false;
             return;
         }
+
         if (!disableMetrics) {
             new Metrics(javaPlugin, 7021, this);
         }
+
         this.recipeManager = new RecipeManager();
         this.furnaceManager = new FurnaceManager(this);
         this.tileManager = new TileManager(this);
@@ -82,6 +85,16 @@ public class VirtualFurnaceAPI {
         this.tileTick.start();
         Bukkit.getPluginManager().registerEvents(new FurnaceListener(this), javaPlugin);
         Util.log("Initialized VirtualFurnaceAPI version: &b" + getVersion());
+    }
+
+    /**
+     * Get a static instance of the VirtualFurnaceAPI
+     * <p><b>NOTE:</b> You have to create once first or this will return null</p>
+     *
+     * @return Instance of the VirtualFurnaceAPI
+     */
+    public static VirtualFurnaceAPI getInstance() {
+        return instance;
     }
 
     /**
@@ -108,16 +121,6 @@ public class VirtualFurnaceAPI {
      */
     public void disableFurnaceTick() {
         this.furnaceTick.cancel();
-    }
-
-    /**
-     * Get a static instance of the VirtualFurnaceAPI
-     * <p><b>NOTE:</b> You have to create once first or this will return null</p>
-     *
-     * @return Instance of the VirtualFurnaceAPI
-     */
-    public static VirtualFurnaceAPI getInstance() {
-        return instance;
     }
 
     /**

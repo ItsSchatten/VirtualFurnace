@@ -6,7 +6,13 @@
 
     <groupId>com.shanebeestudios</groupId>
     <artifactId>VirtualFurnace</artifactId>
-    <version>1.0.0-Beta10</version>
+    <version>1.0.0-Beta11</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>Plugin</module>
+        <module>API</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -43,11 +49,11 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
+        <sourceDirectory>Plugin/src/main/java</sourceDirectory>
         <finalName>${project.name}-${project.version}</finalName>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>Plugin/src/main/resources</directory>
                 <filtering>true</filtering>
                 <targetPath>.</targetPath>
                 <includes>
@@ -69,7 +75,9 @@
                         <link>https://hub.spigotmc.org/javadocs/spigot/</link>
                     </links>
                     <!-- Exclude plugin related stuff from JavaDocs -->
-                    <excludePackageNames>com.shanebeestudios.vf:com.shanebeestudios.vf.command:com.shanebeestudios.vf.debug</excludePackageNames>
+                    <excludePackageNames>
+                        com.shanebeestudios.vf:com.shanebeestudios.vf.command:com.shanebeestudios.vf.debug
+                    </excludePackageNames>
                 </configuration>
             </plugin>
         </plugins>
@@ -81,14 +89,4 @@
             </extension>
         </extensions>
     </build>
-
-    <!-- Distribution for maven repo -->
-    <distributionManagement>
-        <repository>
-            <id>maven-ftp-repo</id>
-            <name>VirtualFurnaceAPI Repo</name>
-            <url>ftp://maven.shanebeestudios.com</url>
-        </repository>
-    </distributionManagement>
-
 </project>

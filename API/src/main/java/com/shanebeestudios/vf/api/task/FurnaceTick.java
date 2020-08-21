@@ -25,7 +25,7 @@ public class FurnaceTick extends BukkitRunnable {
     }
 
     public void start() {
-        BukkitTask task = this.runTaskTimerAsynchronously(virtualFurnaceAPI.getJavaPlugin(), 15, 1);
+        BukkitTask task = this.runTaskTimerAsynchronously(virtualFurnaceAPI.getJavaPlugin(), 15, 0L);
         id = task.getTaskId();
     }
 
@@ -39,7 +39,7 @@ public class FurnaceTick extends BukkitRunnable {
                 }
                 furnace.tick();
             }
-        } catch (Exception ignore) {
+        } catch (Exception ignored) {
         }
         tick++;
         if (tick >= 6000) {

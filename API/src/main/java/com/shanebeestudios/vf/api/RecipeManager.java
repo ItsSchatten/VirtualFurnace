@@ -21,6 +21,9 @@ public class RecipeManager {
     RecipeManager() {
         this.fuelMap = new HashMap<>();
         this.furnaceRecipeMap = new HashMap<>();
+
+        registerFuels();
+        registerFurnaceRecipes();
     }
 
     /**
@@ -35,6 +38,13 @@ public class RecipeManager {
         return true;
     }
 
+    // Register vanilla fuels in API to make furnace work.
+    private void registerFuels() {
+        for (Fuel fuel : Fuel.getVanillaFuels()) {
+            registerFuel(fuel);
+        }
+    }
+
     /**
      * Register a new {@link FurnaceRecipe}
      *
@@ -45,6 +55,12 @@ public class RecipeManager {
         if (this.furnaceRecipeMap.containsKey(furnaceRecipe.getKey())) return false;
         this.furnaceRecipeMap.put(furnaceRecipe.getKey(), furnaceRecipe);
         return true;
+    }
+
+    // Register vanilla furnace recipes.
+    private void registerFurnaceRecipes() {
+        for (FurnaceRecipe recipe : FurnaceRecipe.getVanillaFurnaceRecipes())
+            registerFurnaceRecipe(recipe);
     }
 
     /**

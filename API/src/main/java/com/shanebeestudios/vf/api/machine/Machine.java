@@ -1,7 +1,7 @@
 package com.shanebeestudios.vf.api.machine;
 
-import com.shanebeestudios.vf.api.util.Util;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -13,10 +13,11 @@ import java.util.UUID;
 public abstract class Machine {
 
     private final String name;
-    private final UUID uniqueID;
+    private final UUID uniqueID, machineOpener;
 
-    Machine(UUID uniqueID, String name) {
+    Machine(@NotNull UUID uniqueID, UUID machineOpener, String name) {
         this.uniqueID = uniqueID;
+        this.machineOpener = machineOpener;
         this.name = name;
     }
 
@@ -27,6 +28,15 @@ public abstract class Machine {
      */
     public UUID getUniqueID() {
         return uniqueID;
+    }
+
+    /**
+     * Get this machine's opener.
+     *
+     * @return The machine opener's unique id, if there is none; null.
+     */
+    public UUID getMachineOpener() {
+       return machineOpener;
     }
 
     /**
@@ -69,7 +79,7 @@ public abstract class Machine {
         return "Machine{" +
                 "name='" + name + '\'' +
                 ", uniqueID=" + uniqueID +
+                ", machineOpener=" + machineOpener +
                 '}';
     }
-
 }

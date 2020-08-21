@@ -1,3 +1,5 @@
 /FakeFurnace.iml
 /.idea/
 /javadocs.command
+Plugin/target/
+API/target/

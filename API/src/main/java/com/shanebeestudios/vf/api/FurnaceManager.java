@@ -18,12 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -34,10 +29,10 @@ import java.util.function.Consumer;
 public class FurnaceManager {
 
     private final VirtualFurnaceAPI virtualFurnaceAPI;
-    private File furnaceFile;
-    private FileConfiguration furnaceConfig;
     private final Map<UUID, Furnace> furnaceMap;
     private final NamespacedKey key;
+    private File furnaceFile;
+    private FileConfiguration furnaceConfig;
 
     FurnaceManager(VirtualFurnaceAPI virtualFurnaceAPI) {
         this.virtualFurnaceAPI = virtualFurnaceAPI;
@@ -81,7 +76,7 @@ public class FurnaceManager {
      * Create a new furnace
      * <p>This will create a new furnace, add it to the tick list, and save to file</p>
      *
-     * @param name       Name of new furnace (This shows up in the inventory view)
+     * @param name              Name of new furnace (This shows up in the inventory view)
      * @param furnaceProperties Properties to apply to this furnace
      * @return Instance of this new furnace
      */
@@ -106,9 +101,9 @@ public class FurnaceManager {
      * Create a new furnace
      * <p>This will create a new furnace, add it to the tick list, and save to file</p>
      *
-     * @param name       Name of new furnace (This shows up in the inventory view)
+     * @param name              Name of new furnace (This shows up in the inventory view)
      * @param furnaceProperties Properties to apply to this furnace
-     * @param function   Function to run before furnace is created
+     * @param function          Function to run before furnace is created
      * @return Instance of this new furnace
      */
     public Furnace createFurnace(@NotNull String name, @NotNull FurnaceProperties furnaceProperties, @Nullable Consumer<Furnace> function) {
@@ -117,6 +112,61 @@ public class FurnaceManager {
             function.accept(furnace);
         }
         this.furnaceMap.put(furnace.getUniqueID(), furnace);
+        saveFurnace(furnace, true);
+        return furnace;
+    }
+
+    /**
+     * Create a new furnace.
+     * <p>This will create a new furnace, add it to the tick list, and save to file</p>
+     *
+     * @param name              The name of the furnace.
+     * @param opener            The opener's UUID, most likely a player.
+     * @param furnaceProperties The properties to be applied to this furnace.
+     * @return Instance of the new furnace.
+     */
+    public Furnace createFurnaceWithOpener(@NotNull String name, @NotNull UUID opener, @NotNull FurnaceProperties furnaceProperties) {
+        return createFurnaceWithOpener(name, opener, furnaceProperties, null);
+    }
+
+    /**
+     * Create a new furnace.
+     * <p>This will create a new furnace, add it to the tick list, and save to file</p>
+     *
+     * @param name     The name of the furnace.
+     * @param opener   The opener's UUID, most likely a player.
+     * @param function Function to run before the furnace is created.
+     */
+    public Furnace createFurnaceWithOpener(@NotNull String name, @NotNull UUID opener, @Nullable Consumer<Furnace> function) {
+        return createFurnaceWithOpener(name, opener, FurnaceProperties.FURNACE, function);
+    }
+
+    /**
+     * Create a new furnace.
+     * <p>This will create a new furnace, add it to the tick list, and save to file</p>
+     *
+     * @param name   The name of the furnace.
+     * @param opener The opener's UUID, most likely a player.
+     */
+    public Furnace createFurnaceWithOpener(@NotNull String name, @NotNull UUID opener) {
+        return createFurnaceWithOpener(name, opener, FurnaceProperties.FURNACE, null);
+    }
+
+    /**
+     * Create a new furnace.
+     * <p>This will create a new furnace, add it to the tick list, and save to file</p>
+     *
+     * @param name              The name of the furnace.
+     * @param opener            The opener's UUID, most likely a player.
+     * @param furnaceProperties The properties to be applied to this furnace.
+     * @param function          Function to run before the furnace is created.
+     */
+    public Furnace createFurnaceWithOpener(@NotNull String name, @NotNull UUID opener, @NotNull FurnaceProperties furnaceProperties, @Nullable Consumer<Furnace> function) {
+        Furnace furnace = new Furnace(name, opener, furnaceProperties);
+        if (function != null) {
+            function.accept(furnace);
+        }
+        this.furnaceMap.put(opener, furnace);
         saveFurnace(furnace, true);
         return furnace;
     }
@@ -137,10 +187,10 @@ public class FurnaceManager {
     /**
      * Create a {@link Furnace} that is attached to an {@link ItemStack}
      *
-     * @param name       Name of furnace (this will show up in the furnace UI)
+     * @param name              Name of furnace (this will show up in the furnace UI)
      * @param furnaceProperties Properties associated with this furnace item
-     * @param material   Material of the new ItemStack
-     * @param glowing    Whether the item should glow (enchanted)
+     * @param material          Material of the new ItemStack
+     * @param glowing           Whether the item should glow (enchanted)
      * @return New ItemStack with a furnace attached
      */
     public ItemStack createItemWithFurnace(@NotNull String name, @NotNull FurnaceProperties furnaceProperties, @NotNull Material material, boolean glowing) {
@@ -164,11 +214,11 @@ public class FurnaceManager {
     /**
      * Create a {@link Furnace} that is attached to an {@link ItemStack}
      *
-     * @param name       Name of furnace (this will show up in the furnace UI)
+     * @param name              Name of furnace (this will show up in the furnace UI)
      * @param furnaceProperties Properties associated with this furnace item
-     * @param material   Material of the new ItemStack
-     * @param glowing    Whether the item should glow (enchanted)
-     * @param function   Function to run before furnace is created
+     * @param material          Material of the new ItemStack
+     * @param glowing           Whether the item should glow (enchanted)
+     * @param function          Function to run before furnace is created
      * @return New ItemStack with a furnace attached
      */
     public ItemStack createItemWithFurnace(@NotNull String name, @NotNull FurnaceProperties furnaceProperties, @NotNull Material material, boolean glowing, @Nullable Consumer<Furnace> function) {
@@ -190,10 +240,10 @@ public class FurnaceManager {
     /**
      * Create a {@link Furnace} that is attached to an {@link ItemStack}
      *
-     * @param name       Name of furnace (this will show up in the furnace UI)
+     * @param name              Name of furnace (this will show up in the furnace UI)
      * @param furnaceProperties Properties associated with this furnace item
-     * @param itemStack  ItemStack to be copied and have a furnace attached
-     * @param glowing    Whether the item should glow (enchanted)
+     * @param itemStack         ItemStack to be copied and have a furnace attached
+     * @param glowing           Whether the item should glow (enchanted)
      * @return Clone of the input ItemStack with a furnace attached
      */
     public ItemStack createItemWithFurnace(@NotNull String name, @NotNull FurnaceProperties furnaceProperties, @NotNull ItemStack itemStack, boolean glowing) {
@@ -217,11 +267,11 @@ public class FurnaceManager {
     /**
      * Create a {@link Furnace} that is attached to an {@link ItemStack}
      *
-     * @param name       Name of furnace (this will show up in the furnace UI)
+     * @param name              Name of furnace (this will show up in the furnace UI)
      * @param furnaceProperties Properties associated with this furnace item
-     * @param itemStack  ItemStack to be copied and have a furnace attached
-     * @param glowing    Whether the item should glow (enchanted)
-     * @param function   Function to run before furnace is created
+     * @param itemStack         ItemStack to be copied and have a furnace attached
+     * @param glowing           Whether the item should glow (enchanted)
+     * @param function          Function to run before furnace is created
      * @return Clone of the input ItemStack with a furnace attached
      */
     public ItemStack createItemWithFurnace(@NotNull String name, @NotNull FurnaceProperties furnaceProperties, @NotNull ItemStack itemStack, boolean glowing, @Nullable Consumer<Furnace> function) {
@@ -280,7 +330,16 @@ public class FurnaceManager {
             for (String string : section.getKeys(true)) {
                 if (section.get(string) instanceof Furnace) {
                     Furnace furnace = ((Furnace) section.get(string));
-                    this.furnaceMap.put(UUID.fromString(string), (Furnace) section.get(string));
+
+                    if (furnace == null)
+                        return;
+
+                    if (furnace.getMachineOpener() != null) {
+                        this.furnaceMap.put(furnace.getMachineOpener(), furnace);
+                        return;
+                    }
+
+                    this.furnaceMap.put(UUID.fromString(string), furnace);
                 }
             }
         }
