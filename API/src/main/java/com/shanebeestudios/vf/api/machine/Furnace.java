@@ -78,8 +78,8 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
      * @param opener            The opener of the furnace, useful when you need to have a persistent single furnace for a player
      * @param furnaceProperties Property for this furnace.
      */
-    public Furnace(String name, UUID opener, FurnaceProperties furnaceProperties) {
-        super(UUID.randomUUID(), opener, name);
+    public Furnace(String name, String opener, FurnaceProperties furnaceProperties) {
+        super(UUID.randomUUID(), name);
         this.furnaceProperties = furnaceProperties;
         this.recipeManager = VirtualFurnaceAPI.getInstance().getRecipeManager();
         this.cookTime = 0;
@@ -95,8 +95,8 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
     }
 
     // Used for deserializer
-    private Furnace(String name, UUID uuid, UUID opener, int cookTime, int fuelTime, float xp, ItemStack fuel, ItemStack input, ItemStack output, FurnaceProperties furnaceProperties) {
-        super(uuid, opener, name);
+    private Furnace(String name, UUID uuid, int cookTime, int fuelTime, float xp, ItemStack fuel, ItemStack input, ItemStack output, FurnaceProperties furnaceProperties) {
+        super(uuid, name);
         this.recipeManager = VirtualFurnaceAPI.getInstance().getRecipeManager();
         this.cookTime = cookTime;
         this.fuelTime = fuelTime;
@@ -131,7 +131,7 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
      */
     public static Furnace deserialize(Map<String, Object> args) {
         String name = ((String) args.get("name"));
-        UUID uuid = UUID.fromString(((String) args.get("uuid"))), opener = (args.get("opener") == null ? null : UUID.fromString((String) args.get("machineOpener")));
+        UUID uuid = UUID.fromString(((String) args.get("uuid")));
         FurnaceProperties furnaceProperties = (FurnaceProperties) args.get("properties");
         int cookTime = ((Number) args.get("cookTime")).intValue();
         int fuelTime = ((Number) args.get("fuelTime")).intValue();
@@ -139,7 +139,8 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
         ItemStack fuel = ((ItemStack) args.get("fuel"));
         ItemStack input = ((ItemStack) args.get("input"));
         ItemStack output = ((ItemStack) args.get("output"));
-        return new Furnace(name, uuid, opener, cookTime, fuelTime, xp, fuel, input, output, furnaceProperties);
+
+        return new Furnace(name, uuid, cookTime, fuelTime, xp, fuel, input, output, furnaceProperties);
     }
 
     /**
@@ -403,7 +404,6 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("name", this.getName());
         result.put("uuid", this.getUniqueID().toString());
-        result.put("opener", this.getMachineOpener() != null ? this.getMachineOpener().toString() : null);
         result.put("properties", this.furnaceProperties);
         result.put("cookTime", this.cookTime);
         result.put("fuelTime", this.fuelTime);

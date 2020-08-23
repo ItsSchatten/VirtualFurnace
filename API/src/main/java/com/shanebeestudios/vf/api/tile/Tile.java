@@ -1,7 +1,7 @@
 package com.shanebeestudios.vf.api.tile;
 
-import com.shanebeestudios.vf.api.VirtualFurnaceAPI;
 import com.shanebeestudios.vf.api.machine.Machine;
+import com.shanebeestudios.vf.api.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -150,7 +150,9 @@ public abstract class Tile<M extends Machine> {
      * The tile will be removed and no longer tick.</p>
      */
     public void breakTile() {
-        VirtualFurnaceAPI.getInstance().getTileManager().removeTile(this);
+        Util.log("Shouldn't appear.");
+
+//        VirtualFurnaceAPI.getInstance().getTileManager().removeTile(this);
     }
 
     /**

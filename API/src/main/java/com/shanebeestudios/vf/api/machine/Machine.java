@@ -13,11 +13,10 @@ import java.util.UUID;
 public abstract class Machine {
 
     private final String name;
-    private final UUID uniqueID, machineOpener;
+    private final UUID uniqueID;
 
-    Machine(@NotNull UUID uniqueID, UUID machineOpener, String name) {
+    Machine(@NotNull UUID uniqueID, String name) {
         this.uniqueID = uniqueID;
-        this.machineOpener = machineOpener;
         this.name = name;
     }
 
@@ -28,15 +27,6 @@ public abstract class Machine {
      */
     public UUID getUniqueID() {
         return uniqueID;
-    }
-
-    /**
-     * Get this machine's opener.
-     *
-     * @return The machine opener's unique id, if there is none; null.
-     */
-    public UUID getMachineOpener() {
-       return machineOpener;
     }
 
     /**
@@ -79,7 +69,6 @@ public abstract class Machine {
         return "Machine{" +
                 "name='" + name + '\'' +
                 ", uniqueID=" + uniqueID +
-                ", machineOpener=" + machineOpener +
                 '}';
     }
 }

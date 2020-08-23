@@ -3,3 +3,4 @@
 /javadocs.command
 Plugin/target/
 API/target/
+*.iml

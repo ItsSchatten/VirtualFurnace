@@ -1,11 +1,8 @@
 package com.shanebeestudios.vf.api;
 
-import com.shanebeestudios.vf.api.chunk.VirtualChunk;
 import com.shanebeestudios.vf.api.event.machine.FurnaceExtractEvent;
 import com.shanebeestudios.vf.api.machine.Furnace;
 import com.shanebeestudios.vf.api.recipe.Fuel;
-import com.shanebeestudios.vf.api.tile.Tile;
-import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -14,9 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
@@ -26,12 +20,12 @@ class FurnaceListener implements Listener {
 
     private final FurnaceManager furnaceManager;
     private final RecipeManager recipeManager;
-    private final TileManager tileManager;
+    //private final TileManager tileManager;
 
     FurnaceListener(VirtualFurnaceAPI virtualFurnaceAPI) {
         this.furnaceManager = virtualFurnaceAPI.getFurnaceManager();
         this.recipeManager = virtualFurnaceAPI.getRecipeManager();
-        this.tileManager = virtualFurnaceAPI.getTileManager();
+        //this.tileManager = virtualFurnaceAPI.getTileManager();
     }
 
     @EventHandler
@@ -51,7 +45,7 @@ class FurnaceListener implements Listener {
         Block block = event.getClickedBlock();
         if (block == null) return;
 
-        Chunk chunk = block.getChunk();
+/*        Chunk chunk = block.getChunk();
         VirtualChunk virtualChunk = tileManager.getChunk(chunk);
         if (virtualChunk != null) {
             Tile<?> tile = virtualChunk.getTile(block);
@@ -61,7 +55,7 @@ class FurnaceListener implements Listener {
                     tile.activate(event.getPlayer());
                 }
             }
-        }
+        }*/
     }
 
     @EventHandler
@@ -131,7 +125,7 @@ class FurnaceListener implements Listener {
         }
         return true;
     }
-
+/*
     @EventHandler
     private void onChunkLoad(ChunkLoadEvent event) {
         handleChunk(event.getChunk(), true);
@@ -153,6 +147,6 @@ class FurnaceListener implements Listener {
                 tileManager.unloadChunk(virtualChunk);
             }
         }
-    }
+    }*/
 
 }

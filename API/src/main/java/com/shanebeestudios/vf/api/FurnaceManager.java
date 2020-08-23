@@ -117,61 +117,6 @@ public class FurnaceManager {
     }
 
     /**
-     * Create a new furnace.
-     * <p>This will create a new furnace, add it to the tick list, and save to file</p>
-     *
-     * @param name              The name of the furnace.
-     * @param opener            The opener's UUID, most likely a player.
-     * @param furnaceProperties The properties to be applied to this furnace.
-     * @return Instance of the new furnace.
-     */
-    public Furnace createFurnaceWithOpener(@NotNull String name, @NotNull UUID opener, @NotNull FurnaceProperties furnaceProperties) {
-        return createFurnaceWithOpener(name, opener, furnaceProperties, null);
-    }
-
-    /**
-     * Create a new furnace.
-     * <p>This will create a new furnace, add it to the tick list, and save to file</p>
-     *
-     * @param name     The name of the furnace.
-     * @param opener   The opener's UUID, most likely a player.
-     * @param function Function to run before the furnace is created.
-     */
-    public Furnace createFurnaceWithOpener(@NotNull String name, @NotNull UUID opener, @Nullable Consumer<Furnace> function) {
-        return createFurnaceWithOpener(name, opener, FurnaceProperties.FURNACE, function);
-    }
-
-    /**
-     * Create a new furnace.
-     * <p>This will create a new furnace, add it to the tick list, and save to file</p>
-     *
-     * @param name   The name of the furnace.
-     * @param opener The opener's UUID, most likely a player.
-     */
-    public Furnace createFurnaceWithOpener(@NotNull String name, @NotNull UUID opener) {
-        return createFurnaceWithOpener(name, opener, FurnaceProperties.FURNACE, null);
-    }
-
-    /**
-     * Create a new furnace.
-     * <p>This will create a new furnace, add it to the tick list, and save to file</p>
-     *
-     * @param name              The name of the furnace.
-     * @param opener            The opener's UUID, most likely a player.
-     * @param furnaceProperties The properties to be applied to this furnace.
-     * @param function          Function to run before the furnace is created.
-     */
-    public Furnace createFurnaceWithOpener(@NotNull String name, @NotNull UUID opener, @NotNull FurnaceProperties furnaceProperties, @Nullable Consumer<Furnace> function) {
-        Furnace furnace = new Furnace(name, opener, furnaceProperties);
-        if (function != null) {
-            function.accept(furnace);
-        }
-        this.furnaceMap.put(opener, furnace);
-        saveFurnace(furnace, true);
-        return furnace;
-    }
-
-    /**
      * Create a {@link Furnace} that is attached to an {@link ItemStack}
      * <p><b>NOTE:</b> The default <b>{@link FurnaceProperties}</b> associated with this furnace will be <b>{@link FurnaceProperties#FURNACE}</b></p>
      *
@@ -330,14 +275,8 @@ public class FurnaceManager {
             for (String string : section.getKeys(true)) {
                 if (section.get(string) instanceof Furnace) {
                     Furnace furnace = ((Furnace) section.get(string));
-
                     if (furnace == null)
                         return;
-
-                    if (furnace.getMachineOpener() != null) {
-                        this.furnaceMap.put(furnace.getMachineOpener(), furnace);
-                        return;
-                    }
 
                     this.furnaceMap.put(UUID.fromString(string), furnace);
                 }

@@ -2,6 +2,7 @@ package com.shanebeestudios.vf.api.chunk;
 
 import com.shanebeestudios.vf.api.VirtualFurnaceAPI;
 import com.shanebeestudios.vf.api.tile.Tile;
+import com.shanebeestudios.vf.api.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -134,7 +135,8 @@ public class VirtualChunk {
      * @return True if loaded
      */
     public boolean isLoaded() {
-        return VirtualFurnaceAPI.getInstance().getTileManager().isChunkLoaded(this);
+        return false;
+        //return VirtualFurnaceAPI.getInstance().getTileManager().isChunkLoaded(this);
     }
 
     /**
@@ -179,7 +181,8 @@ public class VirtualChunk {
         if (!tickets.contains(p)) {
             tickets.add(p);
             if (!isLoaded()) {
-                VirtualFurnaceAPI.getInstance().getTileManager().loadChunk(this);
+                //VirtualFurnaceAPI.getInstance().getTileManager().loadChunk(this);
+                Util.log("Shouldn't appear.");
             }
             return true;
         }
@@ -200,7 +203,9 @@ public class VirtualChunk {
         if (tickets.contains(p)) {
             tickets.remove(p);
             if (tickets.isEmpty()) {
-                VirtualFurnaceAPI.getInstance().getTileManager().unloadChunk(this);
+//                VirtualFurnaceAPI.getInstance().getTileManager().unloadChunk(this);
+                Util.log("Shouldn't appear.");
+
             }
             return true;
         }
@@ -214,7 +219,7 @@ public class VirtualChunk {
      */
     public void removeAllPluginChunkTickets() {
         tickets.clear();
-        VirtualFurnaceAPI.getInstance().getTileManager().unloadChunk(this);
+        //VirtualFurnaceAPI.getInstance().getTileManager().unloadChunk(this);
     }
 
     /**

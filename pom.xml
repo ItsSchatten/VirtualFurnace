@@ -6,7 +6,7 @@
 
     <groupId>com.shanebeestudios</groupId>
     <artifactId>VirtualFurnace</artifactId>
-    <version>1.0.0-Beta11</version>
+    <version>1.0.1</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -58,6 +58,13 @@
                 <targetPath>.</targetPath>
                 <includes>
                     <include>plugin.yml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>API/src/main/resources</directory>
+                <filtering>true</filtering>
+                <targetPath>.</targetPath>
+                <includes>
                     <include>furnaces.yml</include>
                     <include>tiles.yml</include>
                     <include>VirtualFurnace.properties</include>
