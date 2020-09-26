@@ -2,6 +2,7 @@ package com.shanebeestudios.vf.api;
 
 import com.shanebeestudios.vf.api.recipe.Fuel;
 import com.shanebeestudios.vf.api.recipe.FurnaceRecipe;
+import com.shanebeestudios.vf.api.util.Util;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 
@@ -61,6 +62,7 @@ public class RecipeManager {
     private void registerFurnaceRecipes() {
         for (FurnaceRecipe recipe : FurnaceRecipe.getVanillaFurnaceRecipes())
             registerFurnaceRecipe(recipe);
+        Util.log("Registered all furnace recipes.");
     }
 
     /**

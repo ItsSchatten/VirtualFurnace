@@ -8,6 +8,7 @@ import org.bukkit.inventory.BlastingRecipe;
 import org.bukkit.inventory.SmokingRecipe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,12 +23,29 @@ public class FurnaceRecipe extends Recipe {
     private static final List<FurnaceRecipe> VANILLA_SMOKING_RECIPES = new ArrayList<>();
     private static final List<FurnaceRecipe> VANILLA_BLASTING_RECIPES = new ArrayList<>();
 
+    private static final List<Material> APPLICABLE_LOGTYPES = new ArrayList<>();
+
     static {
+
+        APPLICABLE_LOGTYPES.addAll(Arrays.asList(Material.ACACIA_LOG, Material.BIRCH_LOG, Material.SPRUCE_LOG, Material.OAK_LOG,
+                Material.JUNGLE_LOG, Material.DARK_OAK_WOOD, Material.STRIPPED_ACACIA_LOG, Material.STRIPPED_ACACIA_WOOD, Material.STRIPPED_BIRCH_LOG,
+                Material.STRIPPED_BIRCH_WOOD, Material.STRIPPED_DARK_OAK_LOG, Material.STRIPPED_DARK_OAK_WOOD, Material.STRIPPED_JUNGLE_LOG,
+                Material.STRIPPED_JUNGLE_WOOD,Material.STRIPPED_OAK_LOG, Material.STRIPPED_OAK_WOOD, Material.STRIPPED_SPRUCE_LOG, Material.STRIPPED_SPRUCE_WOOD,
+                Material.OAK_WOOD, Material.DARK_OAK_WOOD, Material.ACACIA_WOOD, Material.BIRCH_WOOD, Material.SPRUCE_WOOD, Material.JUNGLE_WOOD));
+
         Bukkit.recipeIterator().forEachRemaining(recipe -> {
             if (recipe instanceof org.bukkit.inventory.FurnaceRecipe) {
                 org.bukkit.inventory.FurnaceRecipe r = ((org.bukkit.inventory.FurnaceRecipe) recipe);
                 FurnaceRecipe rec = new FurnaceRecipe(Util.getKey("mc_furnace_" + r.getKey().getKey()), r.getInput().getType(), r.getResult().getType(), r.getCookingTime(), r.getExperience());
-                VANILLA_FURNACE_RECIPES.add(rec);
+                if (r.getResult().getType() == Material.CHARCOAL) {
+
+                    APPLICABLE_LOGTYPES.forEach((mat)-> {
+                        FurnaceRecipe charCoal = new FurnaceRecipe(Util.getKey("mc_furnace_charcoal_" + mat.name().toLowerCase()), mat, Material.CHARCOAL, r.getCookingTime(), r.getExperience());
+                        VANILLA_FURNACE_RECIPES.add(charCoal);
+                    });
+
+                } else
+                    VANILLA_FURNACE_RECIPES.add(rec);
             } else if (HAS_SMOKING) {
                 if (recipe instanceof SmokingRecipe) {
                     SmokingRecipe r = ((SmokingRecipe) recipe);
@@ -40,35 +58,6 @@ public class FurnaceRecipe extends Recipe {
                 }
             }
         });
-    }
-
-    /**
-     * Get a list of vanilla Minecraft furnace recipes
-     *
-     * @return List of vanilla furnace recipes
-     */
-    public static List<FurnaceRecipe> getVanillaFurnaceRecipes() {
-        return VANILLA_FURNACE_RECIPES;
-    }
-
-    /**
-     * Get a list of vanilla Minecraft smoking recipes
-     * <p><b>NOTE:</b> These recipes are only available on MC 1.14+</p>
-     *
-     * @return List of vanilla smoking recipes
-     */
-    public static List<FurnaceRecipe> getVanillaSmokingRecipes() {
-        return VANILLA_SMOKING_RECIPES;
-    }
-
-    /**
-     * Get a list of vanilla Minecraft blasting recipes
-     * <p><b>NOTE:</b> These recipes are only available on MC 1.14+</p>
-     *
-     * @return List of vanilla blasting recipes
-     */
-    public static List<FurnaceRecipe> getVanillaBlastingRecipes() {
-        return VANILLA_BLASTING_RECIPES;
     }
 
     private final Material ingredient;
@@ -102,6 +91,35 @@ public class FurnaceRecipe extends Recipe {
         this.ingredient = ingredient;
         this.cookTime = cookTime;
         this.experience = experience;
+    }
+
+    /**
+     * Get a list of vanilla Minecraft furnace recipes
+     *
+     * @return List of vanilla furnace recipes
+     */
+    public static List<FurnaceRecipe> getVanillaFurnaceRecipes() {
+        return VANILLA_FURNACE_RECIPES;
+    }
+
+    /**
+     * Get a list of vanilla Minecraft smoking recipes
+     * <p><b>NOTE:</b> These recipes are only available on MC 1.14+</p>
+     *
+     * @return List of vanilla smoking recipes
+     */
+    public static List<FurnaceRecipe> getVanillaSmokingRecipes() {
+        return VANILLA_SMOKING_RECIPES;
+    }
+
+    /**
+     * Get a list of vanilla Minecraft blasting recipes
+     * <p><b>NOTE:</b> These recipes are only available on MC 1.14+</p>
+     *
+     * @return List of vanilla blasting recipes
+     */
+    public static List<FurnaceRecipe> getVanillaBlastingRecipes() {
+        return VANILLA_BLASTING_RECIPES;
     }
 
     /**
