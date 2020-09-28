@@ -307,7 +307,11 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
         if (fuelAmount > 1) {
             this.fuel.setAmount(fuelAmount - 1);
         } else {
-            this.fuel = null;
+            if (this.fuel.getType() == Material.LAVA_BUCKET)
+                this.fuel.setType(Material.BUCKET);
+            else {
+                this.fuel = null;
+            }
         }
         int burn = (int) (event.getBurnTime() / furnaceProperties.getFuelMultiplier());
         this.fuelTime = burn;
