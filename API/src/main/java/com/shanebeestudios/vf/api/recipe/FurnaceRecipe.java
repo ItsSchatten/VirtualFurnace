@@ -27,11 +27,11 @@ public class FurnaceRecipe extends Recipe {
 
     static {
 
-        APPLICABLE_LOGTYPES.addAll(Arrays.asList(Material.ACACIA_LOG, Material.BIRCH_LOG, Material.SPRUCE_LOG, Material.OAK_LOG,
-                Material.JUNGLE_LOG, Material.DARK_OAK_WOOD, Material.STRIPPED_ACACIA_LOG, Material.STRIPPED_ACACIA_WOOD, Material.STRIPPED_BIRCH_LOG,
-                Material.STRIPPED_BIRCH_WOOD, Material.STRIPPED_DARK_OAK_LOG, Material.STRIPPED_DARK_OAK_WOOD, Material.STRIPPED_JUNGLE_LOG,
-                Material.STRIPPED_JUNGLE_WOOD,Material.STRIPPED_OAK_LOG, Material.STRIPPED_OAK_WOOD, Material.STRIPPED_SPRUCE_LOG, Material.STRIPPED_SPRUCE_WOOD,
-                Material.OAK_WOOD, Material.DARK_OAK_WOOD, Material.ACACIA_WOOD, Material.BIRCH_WOOD, Material.SPRUCE_WOOD, Material.JUNGLE_WOOD));
+        for (Material material : Material.values()) {
+            if (material.name().contains("_LOG") || material.name().contains("_WOOD")) {
+                APPLICABLE_LOGTYPES.add(material);
+            }
+        }
 
         Bukkit.recipeIterator().forEachRemaining(recipe -> {
             if (recipe instanceof org.bukkit.inventory.FurnaceRecipe) {

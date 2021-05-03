@@ -1,10 +1,7 @@
 package com.shanebeestudios.vf.debug;
 
 import com.shanebeestudios.vf.VirtualFurnace;
-import com.shanebeestudios.vf.api.TileManager;
-import com.shanebeestudios.vf.api.chunk.VirtualChunk;
 import com.shanebeestudios.vf.api.machine.Furnace;
-import com.shanebeestudios.vf.api.tile.FurnaceTile;
 import com.shanebeestudios.vf.api.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -19,12 +16,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Debug {
 
     private final VirtualFurnace plugin;
-    private final TileManager tileManager;
+    //private final TileManager tileManager;
     private boolean running;
 
     public Debug(VirtualFurnace plugin) {
         this.plugin = plugin;
-        this.tileManager = plugin.getVirtualFurnaceAPI().getTileManager();
+        //this.tileManager = plugin.getVirtualFurnaceAPI().getTileManager();
         this.running = false;
     }
 
@@ -61,14 +58,14 @@ public class Debug {
                         Furnace furnace = new Furnace("test");
                         furnace.setFuel(new ItemStack(Material.COAL, 64));
                         furnace.setInput(new ItemStack(Material.CHICKEN, 64));
-                        FurnaceTile furnaceTile = tileManager.createFurnaceTile(x << 4, 1, z << 4, world, furnace);
+/*                        FurnaceTile furnaceTile = tileManager.createFurnaceTile(x << 4, 1, z << 4, world, furnace);
                         VirtualChunk virtualChunk = tileManager.getChunk(furnaceTile.getBlock().getChunk());
                         tileManager.loadChunk(virtualChunk);
-                        virtualChunk.addPluginChunkTicket(plugin);
+                        virtualChunk.addPluginChunkTicket(plugin);*/
                     }
                 }
 
-                Util.log("Chunks: &b" + tileManager.getChunks().size() + "&7 Loaded: &b" + tileManager.getLoadedChunks().size());
+                // Util.log("Chunks: &b" + tileManager.getChunks().size() + "&7 Loaded: &b" + tileManager.getLoadedChunks().size());
             }
         };
         runnable.runTaskLaterAsynchronously(this.plugin, 0);

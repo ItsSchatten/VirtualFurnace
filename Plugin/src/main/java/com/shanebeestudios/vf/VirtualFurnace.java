@@ -2,11 +2,9 @@ package com.shanebeestudios.vf;
 
 import com.shanebeestudios.vf.api.FurnaceManager;
 import com.shanebeestudios.vf.api.RecipeManager;
-import com.shanebeestudios.vf.api.TileManager;
 import com.shanebeestudios.vf.api.VirtualFurnaceAPI;
-import com.shanebeestudios.vf.api.recipe.Fuel;
+import com.shanebeestudios.vf.api.recipe.FurnaceFuel;
 import com.shanebeestudios.vf.api.recipe.FurnaceRecipe;
-import com.shanebeestudios.vf.api.task.FurnaceTick;
 import com.shanebeestudios.vf.api.util.Util;
 import com.shanebeestudios.vf.command.FurnaceCommand;
 import org.bukkit.Bukkit;
@@ -18,12 +16,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 @SuppressWarnings("unused")
 public class VirtualFurnace extends JavaPlugin {
 
-    private boolean enabled = true;
     private static VirtualFurnace instance;
+    private boolean enabled = true;
     private VirtualFurnaceAPI virtualFurnaceAPI;
     private RecipeManager recipeManager;
     private FurnaceManager furnaceManager;
-    private TileManager tileManager;
+    //private TileManager tileManager;
+
+    /**
+     * Get an instance of this plugin
+     *
+     * @return Instance of this plugin
+     */
+    public static VirtualFurnace getPlugin() {
+        return instance;
+    }
 
     // If ran as a Bukkit plugin, load the plugin
     @Override
@@ -31,7 +38,7 @@ public class VirtualFurnace extends JavaPlugin {
         instance = this;
         long start = System.currentTimeMillis();
         Util.log("&7Setting up &bVirtualFurnaceAPI");
-        this.virtualFurnaceAPI = new VirtualFurnaceAPI(this);
+        this.virtualFurnaceAPI = new VirtualFurnaceAPI(this, false);
         if (!virtualFurnaceAPI.isEnabled()) {
             Util.log("Failed to load!");
             this.enabled = false;
@@ -40,7 +47,7 @@ public class VirtualFurnace extends JavaPlugin {
         }
         this.recipeManager = virtualFurnaceAPI.getRecipeManager();
         this.furnaceManager = virtualFurnaceAPI.getFurnaceManager();
-        this.tileManager = virtualFurnaceAPI.getTileManager();
+        // this.tileManager = virtualFurnaceAPI.getTileManager();
 
         registerCommands();
         registerRecipes();
@@ -56,7 +63,7 @@ public class VirtualFurnace extends JavaPlugin {
             return;
         }
          */
-        this.tileManager = null;
+        //this.tileManager = null;
         this.furnaceManager = null;
         this.recipeManager = null;
         this.virtualFurnaceAPI.disableAPI();
@@ -85,18 +92,9 @@ public class VirtualFurnace extends JavaPlugin {
     }
 
     private void registerFuels() {
-        for (Fuel fuel : Fuel.getVanillaFuels()) {
-            this.recipeManager.registerFuel(fuel);
+        for (FurnaceFuel fuel : FurnaceFuel.getVanillaFuels()) {
+            this.recipeManager.registerFurnaceFuel(fuel);
         }
-    }
-
-    /**
-     * Get an instance of this plugin
-     *
-     * @return Instance of this plugin
-     */
-    public static VirtualFurnace getPlugin() {
-        return instance;
     }
 
     /**

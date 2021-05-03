@@ -6,7 +6,7 @@
 
     <groupId>com.shanebeestudios.vf.api</groupId>
     <artifactId>VF-API</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0-Schatten</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -40,7 +40,24 @@
             <version>18.0.0</version>
             <scope>compile</scope>
         </dependency>
-
     </dependencies>
 
+    <build>
+        <defaultGoal>clean install</defaultGoal>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>furnaces.yml</include>
+                    <include>brewing-stands.yml</include>
+                    <include>VirtualFurnace.properties</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                    <exclude>plugin.yml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
 </project>

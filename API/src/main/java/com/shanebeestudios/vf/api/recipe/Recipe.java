@@ -3,6 +3,7 @@ package com.shanebeestudios.vf.api.recipe;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,9 +12,14 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Recipe implements Keyed {
 
     final NamespacedKey key;
-    final Material result;
+    final ItemStack result;
 
     Recipe(@NotNull NamespacedKey key, @NotNull Material result) {
+        this.key = key;
+        this.result = new ItemStack(result);
+    }
+
+    Recipe(@NotNull NamespacedKey key, @NotNull ItemStack result) {
         this.key = key;
         this.result = result;
     }
@@ -35,6 +41,10 @@ public abstract class Recipe implements Keyed {
      * @return Result of this recipe
      */
     public Material getResult() {
+        return this.result.getType();
+    }
+
+    public ItemStack getItemResult() {
         return this.result;
     }
 

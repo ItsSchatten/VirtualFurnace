@@ -1,10 +1,13 @@
 package com.shanebeestudios.vf.api;
 
-import com.shanebeestudios.vf.api.recipe.Fuel;
+import com.shanebeestudios.vf.api.recipe.BrewingFuel;
+import com.shanebeestudios.vf.api.recipe.BrewingRecipe;
+import com.shanebeestudios.vf.api.recipe.FurnaceFuel;
 import com.shanebeestudios.vf.api.recipe.FurnaceRecipe;
 import com.shanebeestudios.vf.api.util.Util;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,34 +19,47 @@ import java.util.Map;
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class RecipeManager {
 
-    private final Map<NamespacedKey, Fuel> fuelMap;
+    private final Map<NamespacedKey, FurnaceFuel> furnaceFuelMap;
+    private final Map<NamespacedKey, BrewingFuel> brewingFuelMap;
     private final Map<NamespacedKey, FurnaceRecipe> furnaceRecipeMap;
+    private final Map<NamespacedKey, BrewingRecipe> brewingRecipeMap;
 
     RecipeManager() {
-        this.fuelMap = new HashMap<>();
+        this.furnaceFuelMap = new HashMap<>();
+        this.brewingFuelMap = new HashMap<>();
         this.furnaceRecipeMap = new HashMap<>();
+        this.brewingRecipeMap = new HashMap<>();
 
         registerFuels();
-        registerFurnaceRecipes();
+        registerRecipes();
     }
 
     /**
-     * Register a new {@link Fuel}
+     * Register a new {@link FurnaceFuel}
      *
      * @param fuel new Fuel to register
      * @return true if fuel was registered
      */
-    public boolean registerFuel(Fuel fuel) {
-        if (this.fuelMap.containsKey(fuel.getKey())) return false;
-        this.fuelMap.put(fuel.getKey(), fuel);
+    public boolean registerFurnaceFuel(FurnaceFuel fuel) {
+        if (this.furnaceFuelMap.containsKey(fuel.getKey())) return false;
+        this.furnaceFuelMap.put(fuel.getKey(), fuel);
         return true;
     }
 
+    public boolean registerBrewingFuel(BrewingFuel fuel) {
+        if (this.brewingFuelMap.containsKey(fuel.getKey())) return false;
+        this.brewingFuelMap.put(fuel.getKey(), fuel);
+        return true;
+    }
+
+
     // Register vanilla fuels in API to make furnace work.
     private void registerFuels() {
-        for (Fuel fuel : Fuel.getVanillaFuels()) {
-            registerFuel(fuel);
+        for (FurnaceFuel fuel : FurnaceFuel.getVanillaFuels()) {
+            registerFurnaceFuel(fuel);
         }
+
+        registerBrewingFuel(BrewingFuel.BLAZE_POWDER);
     }
 
     /**
@@ -58,20 +74,35 @@ public class RecipeManager {
         return true;
     }
 
+    public boolean registerBrewingRecipe(BrewingRecipe brewingRecipe) {
+        if (this.brewingRecipeMap.containsKey(brewingRecipe.getKey())) return false;
+        this.brewingRecipeMap.put(brewingRecipe.getKey(), brewingRecipe);
+        return true;
+    }
+
     // Register vanilla furnace recipes.
-    private void registerFurnaceRecipes() {
+    private void registerRecipes() {
         for (FurnaceRecipe recipe : FurnaceRecipe.getVanillaFurnaceRecipes())
             registerFurnaceRecipe(recipe);
+
+        for (BrewingRecipe recipe : BrewingRecipe.getVanillaBrewingRecipes()) {
+            registerBrewingRecipe(recipe);
+        }
         Util.log("Registered all furnace recipes.");
     }
 
     /**
-     * Get a map of all {@link Fuel}s
+     * Get a map of all {@link FurnaceFuel}s
      *
      * @return Map of Fuels
      */
-    public Map<NamespacedKey, Fuel> getFuels() {
-        return this.fuelMap;
+    public Map<NamespacedKey, FurnaceFuel> getFurnaceFuels() {
+        return this.furnaceFuelMap;
+    }
+
+
+    public Map<NamespacedKey, BrewingFuel> getBrewingFuels() {
+        return this.brewingFuelMap;
     }
 
     /**
@@ -83,14 +114,28 @@ public class RecipeManager {
         return this.furnaceRecipeMap;
     }
 
+    public Map<NamespacedKey, BrewingRecipe> getBrewingRecipes() {
+        return this.brewingRecipeMap;
+    }
+
     /**
-     * Get a {@link Fuel} by material
+     * Get a {@link FurnaceFuel} by material
      *
      * @param material Material of Fuel to grab
      * @return Fuel from recipe
      */
-    public Fuel getFuelByMaterial(Material material) {
-        for (Fuel fuel : this.fuelMap.values()) {
+    public FurnaceFuel getFuelByMaterial(Material material) {
+        for (FurnaceFuel fuel : this.furnaceFuelMap.values()) {
+            if (fuel.matchFuel(material)) {
+                return fuel;
+            }
+        }
+        return null;
+    }
+
+
+    public BrewingFuel getBrewingFuelByMaterial(Material material) {
+        for (BrewingFuel fuel : this.brewingFuelMap.values()) {
             if (fuel.matchFuel(material)) {
                 return fuel;
             }
@@ -99,13 +144,17 @@ public class RecipeManager {
     }
 
     /**
-     * Get a {@link Fuel} by key
+     * Get a {@link FurnaceFuel} by key
      *
      * @param key Key of Fuel
      * @return Fuel from key
      */
-    public Fuel getFuelByKey(NamespacedKey key) {
-        return this.fuelMap.get(key);
+    public FurnaceFuel getFuelByKey(NamespacedKey key) {
+        return this.furnaceFuelMap.get(key);
+    }
+
+    public BrewingFuel getBrewFuelByKey(NamespacedKey key) {
+        return this.brewingFuelMap.get(key);
     }
 
     /**
@@ -123,6 +172,17 @@ public class RecipeManager {
         return null;
     }
 
+    public BrewingRecipe getBrewingRecipeByIngredient(ItemStack ingredient, ItemStack bottle) {
+        for (BrewingRecipe recipe : this.brewingRecipeMap.values()) {
+            ItemStack checkItem = ingredient.clone();
+            checkItem.setAmount(1);
+            if (recipe.getIngredient().equals(checkItem) && recipe.getInputBottle().isSimilar(bottle)) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+
     /**
      * Get a {@link FurnaceRecipe} by key
      *
@@ -131,6 +191,10 @@ public class RecipeManager {
      */
     public FurnaceRecipe getFurnaceRecipeByKey(NamespacedKey key) {
         return this.furnaceRecipeMap.get(key);
+    }
+
+    public BrewingRecipe getBrewingFurnaceRecipeByKey(NamespacedKey key) {
+        return this.brewingRecipeMap.get(key);
     }
 
 }

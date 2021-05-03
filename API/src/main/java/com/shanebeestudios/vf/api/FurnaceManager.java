@@ -282,7 +282,8 @@ public class FurnaceManager {
                 }
             }
         }
-        Util.log("Loaded: &b" + this.furnaceMap.size() + "&7 furnaces");
+        if (!virtualFurnaceAPI.isSilentStart())
+            Util.log("Loaded: &b" + this.furnaceMap.size() + "&7 furnaces");
     }
 
     /**

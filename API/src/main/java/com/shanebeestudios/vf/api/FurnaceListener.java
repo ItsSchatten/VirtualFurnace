@@ -1,8 +1,10 @@
 package com.shanebeestudios.vf.api;
 
 import com.shanebeestudios.vf.api.event.machine.FurnaceExtractEvent;
+import com.shanebeestudios.vf.api.machine.BrewingStand;
 import com.shanebeestudios.vf.api.machine.Furnace;
-import com.shanebeestudios.vf.api.recipe.Fuel;
+import com.shanebeestudios.vf.api.recipe.FurnaceFuel;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -83,7 +85,7 @@ class FurnaceListener implements Listener {
             else if (slot == 1) {
                 ItemStack cursor = clicker.getItemOnCursor();
 
-                Fuel fuel = recipeManager.getFuelByMaterial(cursor.getType());
+                FurnaceFuel fuel = recipeManager.getFuelByMaterial(cursor.getType());
                 if (fuel != null && isNotVanillaFuel(cursor)) {
                     ItemStack furnaceFuel = furnace.getFuel();
                     event.setCancelled(true);
@@ -114,11 +116,26 @@ class FurnaceListener implements Listener {
                     }
                 }
             }
+        } else if (holder instanceof BrewingStand) {
+            Player player = ((Player) event.getWhoClicked());
+            ItemStack c = player.getItemOnCursor();
+            ItemStack cursor = c.getType() != Material.AIR ? c.clone() : null;
+            int slot = event.getRawSlot();
+            if (slot >= 0 && slot <= 4) {
+                // If shift-clicking we dont want to cancel since this will
+                // just be removing items from the inventory not placing in
+                if (event.isShiftClick()) {
+                    return;
+                }
+                event.setCancelled(true);
+                player.setItemOnCursor(event.getView().getItem(slot));
+                event.getView().setItem(slot, cursor);
+            }
         }
     }
 
     private boolean isNotVanillaFuel(ItemStack itemStack) {
-        for (Fuel fuel : Fuel.getVanillaFuels()) {
+        for (FurnaceFuel fuel : FurnaceFuel.getVanillaFuels()) {
             if (fuel.getFuel() == itemStack.getType()) {
                 return false;
             }

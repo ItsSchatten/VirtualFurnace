@@ -6,7 +6,7 @@ import com.shanebeestudios.vf.api.event.machine.FurnaceCookEvent;
 import com.shanebeestudios.vf.api.event.machine.FurnaceFuelBurnEvent;
 import com.shanebeestudios.vf.api.property.FurnaceProperties;
 import com.shanebeestudios.vf.api.property.PropertyHolder;
-import com.shanebeestudios.vf.api.recipe.Fuel;
+import com.shanebeestudios.vf.api.recipe.FurnaceFuel;
 import com.shanebeestudios.vf.api.recipe.FurnaceRecipe;
 import com.shanebeestudios.vf.api.util.Util;
 import org.bukkit.Bukkit;
@@ -53,19 +53,7 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
      * @param name Name of the object which will show up in the UI
      */
     public Furnace(String name) {
-        this(name, null, FurnaceProperties.FURNACE);
-    }
-
-    /**
-     * Create a new furnace object
-     * <p><b>NOTE:</b> Creating a furnace object using this method will not tick the furnace.</p>
-     * <p>It is recommended to use <b>{@link com.shanebeestudios.vf.api.FurnaceManager#createFurnace(String)}</b></p>
-     *
-     * @param name              Name of the object which will show up in the UI
-     * @param furnaceProperties Property for this furnace
-     */
-    public Furnace(String name, FurnaceProperties furnaceProperties) {
-        this(name, null, furnaceProperties);
+        this(name, FurnaceProperties.FURNACE);
     }
 
     /**
@@ -75,10 +63,9 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
      * <p><b>NOTE:</b> The properties used for this furnace will be <b>{@link FurnaceProperties#FURNACE}</b></p>
      *
      * @param name              Name of the object which will show up in the UI
-     * @param opener            The opener of the furnace, useful when you need to have a persistent single furnace for a player
      * @param furnaceProperties Property for this furnace.
      */
-    public Furnace(String name, String opener, FurnaceProperties furnaceProperties) {
+    public Furnace(String name, FurnaceProperties furnaceProperties) {
         super(UUID.randomUUID(), name);
         this.furnaceProperties = furnaceProperties;
         this.recipeManager = VirtualFurnaceAPI.getInstance().getRecipeManager();
@@ -111,7 +98,7 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
         } else {
             this.cookTimeTotal = 0;
         }
-        Fuel fuelF = recipeManager.getFuelByMaterial(fuel != null ? fuel.getType() : null);
+        FurnaceFuel fuelF = recipeManager.getFuelByMaterial(fuel != null ? fuel.getType() : null);
         if (fuelF != null) {
             this.fuelTimeTotal = fuelF.getBurnTime();
         } else {
@@ -296,7 +283,7 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
 
     // Process the burning process of the furnace.
     private void processBurn() {
-        Fuel fuel = this.recipeManager.getFuelByMaterial(this.fuel.getType());
+        FurnaceFuel fuel = this.recipeManager.getFuelByMaterial(this.fuel.getType());
         if (fuel == null) return;
         FurnaceFuelBurnEvent event = new FurnaceFuelBurnEvent(this, this.fuel, fuel, fuel.getBurnTime());
         Bukkit.getPluginManager().callEvent(event);

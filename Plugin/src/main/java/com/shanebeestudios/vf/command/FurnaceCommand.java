@@ -1,11 +1,14 @@
 package com.shanebeestudios.vf.command;
 
-import com.shanebeestudios.vf.api.FurnaceManager;
 import com.shanebeestudios.vf.VirtualFurnace;
-import com.shanebeestudios.vf.api.TileManager;
+import com.shanebeestudios.vf.api.BrewingManager;
+import com.shanebeestudios.vf.api.FurnaceManager;
+import com.shanebeestudios.vf.api.RecipeManager;
+import com.shanebeestudios.vf.api.machine.BrewingStand;
+import com.shanebeestudios.vf.api.machine.Furnace;
 import com.shanebeestudios.vf.api.property.FurnaceProperties;
-import com.shanebeestudios.vf.debug.Debug;
 import com.shanebeestudios.vf.api.util.Util;
+import com.shanebeestudios.vf.debug.Debug;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,19 +19,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import com.shanebeestudios.vf.api.machine.Furnace;
 
 import java.util.UUID;
 
 public class FurnaceCommand implements CommandExecutor {
 
     private final FurnaceManager furnaceManager;
-    private final TileManager tileManager;
+    private final BrewingManager brewingManager;
+    private final RecipeManager recipeManager;
+    //private final TileManager tileManager;
     private final Debug debug;
 
     public FurnaceCommand(VirtualFurnace plugin) {
-        this.furnaceManager = plugin.getFurnaceManager();
-        this.tileManager = plugin.getVirtualFurnaceAPI().getTileManager();
+        this.furnaceManager = plugin.getVirtualFurnaceAPI().getFurnaceManager();
+        this.brewingManager = plugin.getVirtualFurnaceAPI().getBrewingManager();
+        this.recipeManager = plugin.getVirtualFurnaceAPI().getRecipeManager();
+        //this.tileManager = plugin.getVirtualFurnaceAPI().getTileManager();
         this.debug = new Debug(plugin);
     }
 
@@ -82,7 +88,7 @@ public class FurnaceCommand implements CommandExecutor {
                                 assert smokerMeta != null;
                                 smokerMeta.setDisplayName(Util.getColString(smokerName));
                                 smokerItem.setItemMeta(smokerMeta);
-                                player.getInventory().addItem(this.furnaceManager.createItemWithFurnace(smokerName, FurnaceProperties.SMOKER,smokerItem, true));
+                                player.getInventory().addItem(this.furnaceManager.createItemWithFurnace(smokerName, FurnaceProperties.SMOKER, smokerItem, true));
 
                                 ItemStack fastItem = new ItemStack(Material.BLAST_FURNACE);
                                 String fastName = "&6Fast Food";
@@ -111,11 +117,29 @@ public class FurnaceCommand implements CommandExecutor {
                         break;
                     case "tile":
                         Location loc = player.getTargetBlockExact(20).getLocation();
-                        tileManager.createFurnaceTile(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), player.getWorld(), "test-smoker", FurnaceProperties.SMOKER);
+                        // tileManager.createFurnaceTile(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), player.getWorld(), "test-smoker", FurnaceProperties.SMOKER);
                         player.sendMessage("Tile created");
                         break;
                     case "debug":
-                        if (args.length == 1) {
+
+                        if (args.length == 3 && args[1].equalsIgnoreCase("open")) {
+                            BrewingStand stand = brewingManager.getByID(UUID.fromString(args[2]));
+                            brewingManager.saveBrewing(stand, true);
+                            stand.openInventory(player);
+                            return true;
+                        }
+
+                        if (args.length == 2 && args[1].equalsIgnoreCase("brewing")) {
+                            Util.log(recipeManager.getBrewingRecipes() + "");
+                            return true;
+                        }
+
+                        BrewingStand stand = brewingManager.createBrewingStand("Some Name");
+                        stand.openInventory(player);
+
+                        Util.log(brewingManager.getAllStands() + "");
+
+                        /*                        if (args.length == 1) {
                             sender.sendMessage("How much ya wanna debug?");
                             return true;
                         }
@@ -123,20 +147,20 @@ public class FurnaceCommand implements CommandExecutor {
                         if (debug.isRunning()) {
                             player.sendMessage("Debugger currently running... please wait!");
                             return true;
-                        }
+                        }*/
                         //sender.sendMessage("Debugging " + amount + " new furnaces!");
                         //debug.loadDebugFurnaces(amount, player);
-                        debug.loadDebugTiles(amount);
+                        //                      debug.loadDebugTiles(amount);
                         break;
                     case "check":
-                        int furnaces = furnaceManager.getAllFurnaces().size();
+/*                        int furnaces = furnaceManager.getAllFurnaces().size();
                         int tiles = tileManager.getAllTiles().size();
                         int chunks = tileManager.getChunks().size();
                         int loadedChunks = tileManager.getLoadedChunks().size();
                         Util.log("&dCheck:");
                         Util.log(" - Chunks: &b" + loadedChunks + "/" + chunks);
                         Util.log(" - Tiles: &a" + tiles);
-                        Util.log(" - Furnaces: &c" + furnaces);
+                        Util.log(" - Furnaces: &c" + furnaces);*/
 
                 }
             }

@@ -1,9 +1,10 @@
 package com.shanebeestudios.vf.api;
 
+import com.shanebeestudios.vf.api.machine.BrewingStand;
 import com.shanebeestudios.vf.api.machine.Furnace;
+import com.shanebeestudios.vf.api.property.BrewingProperties;
 import com.shanebeestudios.vf.api.property.FurnaceProperties;
 import com.shanebeestudios.vf.api.task.FurnaceTick;
-import com.shanebeestudios.vf.api.task.TileTick;
 import com.shanebeestudios.vf.api.tile.FurnaceTile;
 import com.shanebeestudios.vf.api.util.Util;
 import org.bukkit.Bukkit;
@@ -26,25 +27,28 @@ public class VirtualFurnaceAPI {
     static {
         ConfigurationSerialization.registerClass(Furnace.class, "furnace");
         ConfigurationSerialization.registerClass(FurnaceProperties.class, "furnace_properties");
+        ConfigurationSerialization.registerClass(BrewingStand.class, "brewing_stand");
+        ConfigurationSerialization.registerClass(BrewingProperties.class, "brewing_stand_properties");
         ConfigurationSerialization.registerClass(FurnaceTile.class, "tile");
     }
 
     private final String apiVersion;
     private final JavaPlugin plugin;
     private boolean enabled = true;
+    private boolean silentStart = false;
     private RecipeManager recipeManager;
     private FurnaceManager furnaceManager;
-    //private TileManager tileManager;
+    private BrewingManager brewingManager;
+    // private TileManager tileManager;
     private FurnaceTick furnaceTick;
-    //private TileTick tileTick;
 
     /**
      * Create a new instance of the VirtualFurnaceAPI
      *
      * @param javaPlugin Your plugin
      */
-    public VirtualFurnaceAPI(JavaPlugin javaPlugin) {
-        this(javaPlugin, false);
+    public VirtualFurnaceAPI(JavaPlugin javaPlugin, boolean silentStart) {
+        this(javaPlugin, silentStart, false);
     }
 
     /**
@@ -55,13 +59,15 @@ public class VirtualFurnaceAPI {
      * @param javaPlugin     Your plugin
      * @param disableMetrics Disable metrics for VirtualFurnaceAPI (If you are using metrics in your own plugin)
      */
-    public VirtualFurnaceAPI(@NotNull JavaPlugin javaPlugin, boolean disableMetrics) {
+    public VirtualFurnaceAPI(@NotNull JavaPlugin javaPlugin, boolean silentStart, boolean disableMetrics) {
         instance = this;
         this.plugin = javaPlugin;
         this.apiVersion = getVersion();
+        this.silentStart = silentStart;
         if (!Util.classExists("org.bukkit.persistence.PersistentDataHolder")) {
             this.recipeManager = null;
             this.furnaceManager = null;
+            this.brewingManager = null;
             //this.tileManager = null;
             this.furnaceTick = null;
             //this.tileTick = null;
@@ -77,6 +83,7 @@ public class VirtualFurnaceAPI {
 
         this.recipeManager = new RecipeManager();
         this.furnaceManager = new FurnaceManager(this);
+        this.brewingManager = new BrewingManager(this);
         //this.tileManager = new TileManager(this);
         //this.tileManager.load();
         this.furnaceTick = new FurnaceTick(this);
@@ -84,8 +91,12 @@ public class VirtualFurnaceAPI {
         //this.tileTick = new TileTick(this);
         //this.tileTick.start();
         Bukkit.getPluginManager().registerEvents(new FurnaceListener(this), javaPlugin);
-        Util.log("Initialized VirtualFurnaceAPI version: &b" + getVersion());
+        if (!silentStart) {
+            Util.log("Initialized VirtualFurnaceAPI version: &b" + getVersion());
+        }
+
     }
+    //private TileTick tileTick;
 
     /**
      * Get a static instance of the VirtualFurnaceAPI
@@ -95,6 +106,14 @@ public class VirtualFurnaceAPI {
      */
     public static VirtualFurnaceAPI getInstance() {
         return instance;
+    }
+
+    public boolean isSilentStart() {
+        return silentStart;
+    }
+
+    public BrewingManager getBrewingManager() {
+        return brewingManager;
     }
 
     /**
@@ -108,8 +127,10 @@ public class VirtualFurnaceAPI {
         this.furnaceTick = null;
         //this.tileTick = null;
         this.furnaceManager.shutdown();
-       // this.tileManager.shutdown();
+        this.brewingManager.shutdown();
+        // this.tileManager.shutdown();
         this.furnaceManager = null;
+        this.brewingManager = null;
         //this.tileManager = null;
         this.recipeManager = null;
         Util.log("Shut down API!");
@@ -150,12 +171,13 @@ public class VirtualFurnaceAPI {
         return furnaceManager;
     }
 
-/*    public TileManager getTileManager() {
-        return tileManager;
-
+    /*    *//**
      * Get an instance of the tile manager
      *
-     * @return Instance of the tile manager
+     * @return Instance of the {@link TileManager}
+     *//*
+    public TileManager getTileManager() {
+        return tileManager;
     }*/
 
     /**
