@@ -2,11 +2,11 @@ package com.shanebeestudios.api.machine;
 
 import com.shanebeestudios.api.FurnaceManager;
 import com.shanebeestudios.api.RecipeManager;
+import com.shanebeestudios.api.VirtualFurnaceAPI;
 import com.shanebeestudios.api.event.machine.FurnaceCookEvent;
 import com.shanebeestudios.api.event.machine.FurnaceFuelBurnEvent;
 import com.shanebeestudios.api.property.FurnaceProperties;
 import com.shanebeestudios.api.property.PropertyHolder;
-import com.shanebeestudios.api.VirtualFurnaceAPI;
 import com.shanebeestudios.api.recipe.FurnaceFuel;
 import com.shanebeestudios.api.recipe.FurnaceRecipe;
 import com.shanebeestudios.api.util.Util;
@@ -238,11 +238,14 @@ public class Furnace extends Machine implements PropertyHolder<FurnaceProperties
             this.output = output;
         }
         for (HumanEntity entity : this.inventory.getViewers()) {
-            InventoryView view = entity.getOpenInventory();
-            view.setProperty(InventoryView.Property.COOK_TIME, this.cookTime);
-            view.setProperty(InventoryView.Property.TICKS_FOR_CURRENT_SMELTING, this.cookTimeTotal);
-            view.setProperty(InventoryView.Property.BURN_TIME, this.fuelTime);
-            view.setProperty(InventoryView.Property.TICKS_FOR_CURRENT_FUEL, this.fuelTimeTotal);
+            try {
+                InventoryView view = entity.getOpenInventory();
+                view.setProperty(InventoryView.Property.COOK_TIME, this.cookTime);
+                view.setProperty(InventoryView.Property.TICKS_FOR_CURRENT_SMELTING, this.cookTimeTotal);
+                view.setProperty(InventoryView.Property.BURN_TIME, this.fuelTime);
+                view.setProperty(InventoryView.Property.TICKS_FOR_CURRENT_FUEL, this.fuelTimeTotal);
+            } catch (Exception ignored) {
+            }
         }
     }
 

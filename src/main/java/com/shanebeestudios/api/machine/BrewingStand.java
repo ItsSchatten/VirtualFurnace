@@ -284,7 +284,7 @@ public class BrewingStand extends Machine implements PropertyHolder<BrewingPrope
                 InventoryView view = viewer.getOpenInventory();
                 view.setProperty(InventoryView.Property.BREW_TIME, brewTime);
                 view.setProperty(InventoryView.Property.FUEL_TIME, (int) Math.round(((double) fuelTime) / ((double) (max / 20))));
-            } catch (final ArrayIndexOutOfBoundsException ignored) {
+            } catch (final Exception ignored) {
             }
         });
     }
